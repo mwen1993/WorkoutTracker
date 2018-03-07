@@ -1,1 +1,1 @@
-This is a simple desktop Java application that is used to keep track of personal workout routines. 
+This is a simple desktop Java application that is used to keep track of personal workout routines. A set of direction will guide and prompt user to input their daily workout. The workout will be outputed to a new text file with the name being the date. A list of workouts can be found in WorkoutList.java, to add more workouts simply add them to the list of workouts. 
