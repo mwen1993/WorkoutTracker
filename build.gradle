@@ -1,0 +1,24 @@
+apply plugin: 'java'
+apply plugin: 'application'
+
+sourceSets{
+	main{
+		java{
+			srcDir 'src'
+		}
+	}
+}
+
+jar{
+	manifest{
+		attributes 'Main-Class': 'Main'
+	}
+}
+
+run{
+	standardInput = System.in
+}
+
+mainClassName = 'Main'
+
+task wrapper(type: Wrapper)
