@@ -22,6 +22,7 @@ public class Main {
         prompt();
     }
     
+    // function to display main option and prompt for user interaction
     private static void prompt(){
         //initiator
         System.out.println("1. ADD a Workout (given date, and workout)");
@@ -34,16 +35,10 @@ public class Main {
         System.out.println();
     }
     
+ 
     private static void promptLoop(){
-        Scanner scan = new Scanner(System.in); 
-        System.out.print("Please enter a number corresponding an option (1-4):");
         
-        while(!scan.hasNextInt()){
-            System.out.print("Please enter a number corresponding an option (1-4):");
-            scan.next();
-        }
-        
-        int input = scan.nextInt();
+        int input = promptUserInt("Please enter a number corresponding an option (1-4):");
         
         switch(input){
             case 1:
@@ -71,63 +66,31 @@ public class Main {
     
     //to ADD a workout
     private static void addWorkout(){
-        Scanner scan = new Scanner(System.in);
+        
         int day, month, year;
-        String strDate, description;
+        String strDate;
         Workout workout;
         MyDate date;
         
         //prompt user to enter correct formatted date
-        while(true){
-            do{
-                System.out.println("Please enter today's date (mm/dd/yyyy)");
-                strDate = scan.next();
-            }while(!strDate.matches("(([0][1-9])|([1][0-2]))/(([0-2][0-9])|([3][0|1]))/([0-9]{4})"));
-
-            System.out.print("Date is " + strDate + ", confirm? (y/n)");
-            
-            if(scan.next().matches("[y|Y]"))
-                break;
-        }
+        strDate = promptUserForDate();
         
         //save string date into int variables
         String[] integerDate = strDate.split("/");
         month = Integer.parseInt(integerDate[0]);
         day = Integer.parseInt(integerDate[1]);
         year = Integer.parseInt(integerDate[2]);
+        
         //instantiate date
         date = new MyDate(month, day, year);
         //instantiate workout with date
         workout = new Workout(date);
         
         //prompt user to add optional description
-        while(true){
-            System.out.println("would you like to add a short description on the workout? (i.e. \"chest day\") [y/n]");
-            if(scan.next().matches("[y|Y]")){
-                System.out.print("Please enter a description: ");
-                scan.nextLine();//consume empty new line or else skip user input
-                description = scan.nextLine();
-                System.out.print("confirm description? [y/n]: ");
-                if(scan.next().matches("[y|Y]")){
-                    workout.setDescription(description);
-                    break;
-                }
-                description = "A Great Workout!";//reset description
-            }
-            else
-                break;
-        }
+        promptUserForDescription(workout);
         
         //prompt user to add exercises
-        while(true){
-            Exercise exercise = chooseExercise();
-            workout.addExercise(exercise);
-            System.out.print("Would you like to add another exercise?: ");
-            scan.nextLine();
-            if(!scan.next().matches("[y|Y]"))
-                break;
-        }
-        
+        promptUserForExercises(workout);
         System.out.println(workout);
         
         //save new workout in a new text file
@@ -156,13 +119,8 @@ public class Main {
         displayExercises();//display exercises
         //prompt user to choose exercise
         while(true){
-            System.out.println("Please Enter the number correspond to the Exercise");
-            while(!scan.hasNextInt()){
-                System.out.println("Please Enter the number correspond to the Exercise");
-                scan.next();
-            };
-            
-            intExercise = scan.nextInt();
+          
+            intExercise = promptUserInt("Please Enter the number correspond to the Exercise");
             
             if(intExercise >= 1 && intExercise <= WorkoutList.workoutList.length){
                 name = WorkoutList.workoutList[intExercise - 1];
@@ -172,29 +130,14 @@ public class Main {
         }
         
         //prompt user to get number of sets
-        System.out.println("How many sets Did you perform?");
-        while(!scan.hasNextInt()){
-            System.out.println("How many sets Did you perform?");
-            scan.next();
-        };
-        setCounter = scan.nextInt();
+        setCounter = promptUserInt("How many sets Did you perform?");
         
         //prompt user to add weight and reps per set
         for(int i = 1; i <= setCounter; i++){
             System.out.println("For set " + i + ", how much weight did you do?(Lbs)");
-            while(!scan.hasNextInt()){
-                System.out.println("Please enter a number weight");
-                scan.next();
-            }
-            weight = scan.nextInt();
-            
+            weight = promptUserInt("Please enter a number weight");
             System.out.println("How many reps?");
-            while(!scan.hasNextInt()){
-                System.out.println("Please enter a number reps");
-                scan.next();
-            }
-            reps = scan.nextInt();
-            
+            reps = promptUserInt("Please enter a number reps");
             sets += "\tSet " + i + ", " + weight + "Lbs for " + reps + " reps. \n";
         }
         //construct new exercise object
@@ -233,5 +176,83 @@ public class Main {
             System.out.println("Oops, file was not saved.   ");
         }
         System.out.println("Workout Saved!");
+    }
+    
+    // prompt user to enter an integer
+    private static int promptUserInt(String message){
+        
+        Scanner scan = new Scanner(System.in); 
+        
+        System.out.print(message);
+        
+        while(!scan.hasNextInt()){
+            System.out.print(message);
+            scan.next();
+        }
+        int userInt = scan.nextInt();
+        
+        return userInt;
+    }
+    
+    //prompt user to enter the date, must be in correct format
+    private static String promptUserForDate() {
+        
+        Scanner scan = new Scanner(System.in);
+        String strDate;
+        
+         while(true){
+            do{
+                System.out.println("Please enter today's date (mm/dd/yyyy)");
+                strDate = scan.next();
+            }while(!strDate.matches("(([0][1-9])|([1][0-2]))/(([0-2][0-9])|([3][0|1]))/([0-9]{4})"));
+
+            System.out.print("Date is " + strDate + ", confirm? (y/n)");
+            
+            if(scan.next().matches("[y|Y]"))
+                break;
+        }
+         
+        return strDate;
+    }
+    
+    // prompt user to enter a description for workout, then sets description for workout
+    private static void promptUserForDescription(Workout workout) {
+        
+        Scanner scan = new Scanner(System.in);
+        String description;
+        
+        while(true){
+            System.out.println("would you like to add a short description on the workout? (i.e. \"chest day\") [y/n]");
+            if(scan.next().matches("[y|Y]")){
+                System.out.print("Please enter a description: ");
+                scan.nextLine();//consume empty new line or else skip user input
+                description = scan.nextLine();
+                System.out.print("confirm description? [y/n]: ");
+                if(scan.next().matches("[y|Y]")){
+                    workout.setDescription(description);
+                    break;
+                }
+                description = "A Great Workout!";//reset description
+            }
+            else
+                break;
+        }
+        
+ 
+    }
+    
+    // prompt user to enter exercises, then sets the exercises in the workout1
+    private static void promptUserForExercises(Workout workout) {
+        
+        Scanner scan = new Scanner(System.in);
+        
+        while(true){
+            Exercise exercise = chooseExercise();
+            workout.addExercise(exercise);
+            System.out.print("Would you like to add another exercise?: ");
+            scan.nextLine();
+            if(!scan.next().matches("[y|Y]"))
+                break;
+        }
     }
 }
