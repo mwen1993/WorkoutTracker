@@ -1,3 +1,4 @@
+1
 /*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
@@ -250,7 +251,6 @@ public class Main {
             Exercise exercise = chooseExercise();
             workout.addExercise(exercise);
             System.out.print("Would you like to add another exercise?: ");
-            scan.nextLine();
             if(!scan.next().matches("[y|Y]"))
                 break;
         }
